@@ -1,0 +1,82 @@
+table Products
+	lineageTag: b78d8667-9ead-4394-b287-b9d377ced0e8
+
+	column ProductID
+		dataType: string
+		lineageTag: 2efbfff2-9aef-40a4-8456-0a76f56e7101
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: cde8440a-abbd-4221-b99c-b2a62992391d
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductCategory
+		dataType: string
+		lineageTag: 58b00304-cef6-4dc2-9684-9128212dffb4
+		summarizeBy: none
+		sourceColumn: ProductCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		lineageTag: df3367c7-548a-4678-80c1-569e4adf6980
+		summarizeBy: none
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Amount_By_Product = ```
+			
+			CALCULATE(
+			    SUM(Sales[TotalAmount]),
+			    VALUES(Sales[ProductID])
+			)
+			
+			
+			```
+		lineageTag: dc818475-ccf2-4a87-870f-072761cfd1ee
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Prod_Amount_Ranking = ```
+			
+			RANKX(
+			  ALL(Products),
+			  Products[Total_Amount_By_Product],
+			  ,
+			  DESC 
+			)
+			
+			
+			```
+		formatString: 0
+		lineageTag: 05481dbb-78c4-4cfd-bd6c-83a324bc0c09
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Products = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\MY_PROJECTS\JMAN_FINAL_PROJECT_POWER_BI\seeds\Products.csv"),[Delimiter=",", Columns=4, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ProductID", type text}, {"ProductName", type text}, {"ProductCategory", type text}, {"UnitPrice", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

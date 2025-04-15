@@ -1,0 +1,223 @@
+table Customers
+	lineageTag: b30586e9-b6d2-48b9-ab56-a6098091a142
+
+	measure CustomerID_Measure = COALESCE(COUNT(Customers[CustomerID]), 0)
+		formatString: 0
+		lineageTag: 930c340c-721e-40d8-8e90-e7d2080d7c80
+
+	column CustomerID
+		dataType: string
+		lineageTag: f1a500c3-d2b1-4098-b8fa-1cd3a953430c
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: 3bd508dd-89bf-46bb-82e5-1e2f46412c2d
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column JoinDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 59ea7f67-2748-4246-a95f-f75b1afeca14
+		summarizeBy: none
+		sourceColumn: JoinDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Region
+		dataType: string
+		lineageTag: 3ea8945c-47bd-473b-8a8b-eedf69e61426
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel
+		dataType: string
+		lineageTag: b758416e-e27f-4bc5-ad76-7170a948badb
+		summarizeBy: none
+		sourceColumn: Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Total_Spent = ```
+			
+			SUMX(
+			    VALUES(Sales[CustomerID]), 
+			    CALCULATE(SUM(Sales[TotalAmount]))
+			)
+			
+			```
+		lineageTag: f181ced6-4a22-410e-b295-3a6d9d389372
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Customer_Rank = ```
+			
+			RANKX(
+			    ALL(Customers),
+			    Customers[Total_Spent],
+			    ,
+			    DESC
+			)
+			
+			```
+		formatString: 0
+		lineageTag: f794f120-4500-4d15-8420-d5d044aadbcc
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value_seg =
+			
+			VAR Tot_customers = DISTINCTCOUNT(Customers[CustomerID])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        Customers[Customer_Rank] <= Tot_customers/10, "High",
+			        Customers[Customer_Rank] <= Tot_customers/2, "Mid",
+			        "Low"
+			    )
+		lineageTag: 0cbc60b7-f634-4e79-9870-7a1acd99c4fa
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Total_Purchases = ```
+			
+			CALCULATE(
+			    COUNTROWS(Sales),
+			    VALUES(Sales[CustomerID])
+			)
+			
+			```
+		formatString: 0
+		lineageTag: e89a8fd8-86d3-4ee1-820f-d663668f0fe8
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Last_Purchase = ```
+			
+			VAR last_order = CALCULATE(
+			    MAX(Sales[OrderDate]),
+			    VALUES(Sales[CustomerID])
+			)
+			RETURN
+			    DATEDIFF(last_order, TODAY(), DAY)
+			
+			
+			
+			```
+		formatString: 0
+		lineageTag: aac989bd-28ef-44a5-912e-8081ae124ff0
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column R_Score = ```
+			
+			RANKX(
+			  ALL(Customers),
+			  Customers[Last_Purchase],
+			  ,
+			  ASC
+			)
+			
+			```
+		formatString: 0
+		lineageTag: d7dcfdfb-d327-4467-9247-d96c3765f9a1
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column F_Score = ```
+			
+			RANKX(
+			  ALL(Customers),
+			  Customers[Total_Purchases],
+			  ,
+			  DESC 
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 60f7e120-8b93-467c-8ef2-427f2f88788c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column M_Score = ```
+			
+			RANKX(
+			  ALL(Customers),
+			  Customers[Total_Spent],
+			  ,
+			  DESC 
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 293aaca0-2506-472c-80fa-a7089bf45608
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column RFM_Score = ```
+			
+			RANKX(
+			  ALL(Customers),
+			  ([R_Score] + [F_Score] + [M_Score]) / 3,
+			  ,
+			  ASC
+			)
+			
+			```
+		formatString: 0
+		lineageTag: a583ae62-d38b-47f6-95fa-b04102090c45
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column RFM_seg =
+			
+			VAR Tot_customers = DISTINCTCOUNT(Customers[CustomerID])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        Customers[RFM_Score] <= Tot_customers/5, "High",
+			        Customers[RFM_Score] <= Tot_customers/2, "Mid",
+			        "Low"
+			    )
+		lineageTag: e8b0673b-83df-4435-886e-1f62aa5a7978
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Customers = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\MY_PROJECTS\JMAN_FINAL_PROJECT_POWER_BI\seeds\Customers.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"CustomerID", type text}, {"CustomerName", type text}, {"JoinDate", type date}, {"Region", type text}, {"Channel", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

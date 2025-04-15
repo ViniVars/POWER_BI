@@ -1,0 +1,22 @@
+relationship AutoDetected_0f977992-22f3-414c-a619-721c1630f639
+	fromColumn: Sales.CustomerID
+	toColumn: Customers.CustomerID
+
+relationship AutoDetected_ce0b836e-2852-4d65-a823-bb33a80c5e72
+	fromColumn: Sales.ProductID
+	toColumn: Products.ProductID
+
+relationship 78287956-a931-4e4c-b600-c8490fc44dfb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: CalendarTable.Date
+	toColumn: LocalDateTable_1600905b-f666-4e65-8a11-3380b5f6771c.Date
+
+relationship c29ae644-98e2-c837-33e3-0cb308c94cb4
+	fromColumn: Customers.JoinDate
+	toColumn: CalendarTable.Date
+
+relationship 81d00d9a-0bd1-8ad8-bd21-6c1e6ecf5bec
+	isActive: false
+	fromColumn: Sales.OrderDate
+	toColumn: CalendarTable.Date
+

@@ -1,0 +1,151 @@
+table Sales
+	lineageTag: d71f2ae2-2ab9-4798-b94b-45bc30a2daa0
+
+	measure Total_Orders = ```
+			COALESCE(DISTINCTCOUNT(Sales[OrderID]), 0)
+			
+			
+			
+			
+			```
+		lineageTag: 5f1b3e49-6a92-49be-9341-4c29bd74c0ed
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Total_Revenue = ```
+			COALESCE(SUM(Sales[TotalAmount]), 0)
+			
+			
+			```
+		lineageTag: 7d199cd0-f6cc-48bb-8fa3-c2b33a35bcf1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Average_Order_Value = ```
+			COALESCE(Sales[Total_Revenue] / Sales[Total_Orders], 0)
+			
+			```
+		lineageTag: cc644be0-880e-4f66-b0c8-99f5f6afb4a1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ProductID_Measure = COALESCE(COUNT(Sales[ProductID]), 0)
+		formatString: 0
+		lineageTag: a8bbf53c-a2f9-4688-bb6c-5abfe9e02101
+
+	measure OrderID_Measure = COALESCE(COUNT(Sales[OrderID]), 0)
+		formatString: 0
+		lineageTag: 5822d9ec-7404-4743-8cde-06890a4133b4
+
+	column OrderID
+		dataType: string
+		lineageTag: f43c5cf0-2061-46a3-825a-51fdfd25507e
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 72d4741e-8333-4ae3-8d72-b19268380a73
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column CustomerID
+		dataType: string
+		lineageTag: 96f8c64d-d3a3-40e5-9b01-338a8a978635
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: a0c8c3ca-237e-443d-8ff3-f56eb6b8b871
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel
+		dataType: string
+		lineageTag: 3f2e95c0-1417-4018-92dd-836a4d8cce52
+		summarizeBy: none
+		sourceColumn: Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductCategory
+		dataType: string
+		lineageTag: ba882cf2-b1a0-4c7c-b93a-db2b800d9149
+		summarizeBy: none
+		sourceColumn: ProductCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		lineageTag: 21ca7d2a-991f-40df-919a-a8862e55f256
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: double
+		lineageTag: 2348de34-8ae9-4ea3-a546-78944d1b4ff4
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UnitPrice
+		dataType: double
+		lineageTag: 1f0861d2-fc7a-49df-9d7b-3c3b4ab150fa
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TotalAmount
+		dataType: double
+		lineageTag: a58085bc-e907-42aa-b84a-d0dd65bfd365
+		summarizeBy: sum
+		sourceColumn: TotalAmount
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\MY_PROJECTS\JMAN_FINAL_PROJECT_POWER_BI\seeds\Sales.csv"),[Delimiter=",", Columns=10, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    #"Promoted Headers"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,74 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 275.47258018361981
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 673.71250670444078,
+            "y": 625.65927477047512
+          },
+          "nodeIndex": "Sales",
+          "nodeLineageTag": "d71f2ae2-2ab9-4798-b94b-45bc30a2daa0",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 707.47824534284746,
+            "y": 1089.3974532486941
+          },
+          "nodeIndex": "Customers",
+          "nodeLineageTag": "b30586e9-b6d2-48b9-ab56-a6098091a142",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 118.28343583512604,
+            "y": 751.204532127382
+          },
+          "nodeIndex": "Products",
+          "nodeLineageTag": "b78d8667-9ead-4394-b287-b9d377ced0e8",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1294.5472932891234,
+            "y": 686.10306302164554
+          },
+          "nodeIndex": "CalendarTable",
+          "nodeLineageTag": "019b216c-5244-4d3e-a17e-688a5b31bc5d",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 50.346892102823645,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}
